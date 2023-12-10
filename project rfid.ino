@@ -4,9 +4,9 @@
 #include <Wire.h> 
 #include <LiquidCrystal_I2C.h>
 
-constexpr uint8_t RST_PIN = 2;  // Adjust to your wiring, corresponding to D3
+constexpr uint8_t RST_PIN = 8;  // Adjust to your wiring, corresponding to D3
 constexpr uint8_t SS_PIN = 10;  // Adjust to your wiring, corresponding to D8
-constexpr uint8_t SERVO_PIN = 6;  // Adjust to your wiring
+constexpr uint8_t SERVO_PIN = 9;  // Adjust to your wiring
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 Servo myServo;  // Create Servo instance
@@ -14,6 +14,7 @@ LiquidCrystal_I2C lcd(0x27,20,4);  // set the LCD address to 0x27 for a 16 chars
 
 bool servoAtZero = true;  // Variable to store servo position state
 char* status = "Closed";
+float kolom = 6;
 
 void setup() {
   Serial.begin(115200);
@@ -52,7 +53,8 @@ void loop() {
       mfrc522.uid.uidByte[2] != 0x4B && mfrc522.uid.uidByte[3] != 0x0E &&
       mfrc522.uid.uidByte[0] != 0xC3 && mfrc522.uid.uidByte[1] != 0xD8 &&
       mfrc522.uid.uidByte[2] != 0x88 && mfrc522.uid.uidByte[3] != 0x11) {
-    status="Salah";
+    kolom = 2;
+    status="Akses Ditolak!";
   }
   
   
@@ -65,9 +67,11 @@ void loop() {
 void toggleServoPosition() {
   if (servoAtZero) {
     myServo.write(0);  // Move servo to 180 degrees
+    kolom = 6;
     status="Open";
   } else {
     myServo.write(120);  // Move servo back to 0 degrees
+    kolom = 6;
     status="Closed";
   }
   servoAtZero = !servoAtZero;  // Update servo position state
@@ -77,7 +81,7 @@ void layar(){
     // Print a message to the LCD.
   lcd.clear();
   lcd.backlight();
-  lcd.setCursor(3,0);
+  lcd.setCursor(kolom,0);
   lcd.print(status);
   lcd.setCursor(2,1);
 
