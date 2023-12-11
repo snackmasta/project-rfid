@@ -41,22 +41,28 @@ void loop() {
   // Check if the scanned card is the one we are looking for
   if (mfrc522.uid.uidByte[0] == 0xE3 && mfrc522.uid.uidByte[1] == 0xBA &&
       mfrc522.uid.uidByte[2] == 0x4B && mfrc522.uid.uidByte[3] == 0x0E) {
-    toggleServoPosition();  // Toggle servo position
+    Buka();  // Toggle servo position
+    layar();
+    delay(3000);  // Wait for 5 seconds
+    Tutup();
   }
 
   if (mfrc522.uid.uidByte[0] == 0xC3 && mfrc522.uid.uidByte[1] == 0xD8 &&
       mfrc522.uid.uidByte[2] == 0x88 && mfrc522.uid.uidByte[3] == 0x11) {
-    toggleServoPosition();  // Toggle servo position
+    Buka();  // Toggle servo position
+    layar();
+    delay(3000);  // Wait for 5 seconds
+    Tutup();
   }
 
   if (mfrc522.uid.uidByte[0] != 0xE3 && mfrc522.uid.uidByte[1] != 0xBA &&
       mfrc522.uid.uidByte[2] != 0x4B && mfrc522.uid.uidByte[3] != 0x0E &&
       mfrc522.uid.uidByte[0] != 0xC3 && mfrc522.uid.uidByte[1] != 0xD8 &&
       mfrc522.uid.uidByte[2] != 0x88 && mfrc522.uid.uidByte[3] != 0x11) {
-    kolom = 2;
+    Tutup();
+    kolom = 1;
     status="Akses Ditolak!";
   }
-  
   
   mfrc522.PICC_HaltA();
   mfrc522.PCD_StopCrypto1();
@@ -64,17 +70,16 @@ void loop() {
 
 }
 
-void toggleServoPosition() {
-  if (servoAtZero) {
+void Buka() {
     myServo.write(0);  // Move servo to 180 degrees
     kolom = 6;
     status="Open";
-  } else {
+}
+
+void Tutup() {
     myServo.write(120);  // Move servo back to 0 degrees
-    kolom = 6;
+    kolom = 5;
     status="Closed";
-  }
-  servoAtZero = !servoAtZero;  // Update servo position state
 }
 
 void layar(){
